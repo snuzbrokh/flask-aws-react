@@ -8,10 +8,26 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# install system dependencies
+# # install system dependencies
+# RUN apt-get update \
+#   && apt-get -y install netcat gcc postgresql \
+#   # psycopg2 dependencies
+#   && apt-get install -y libpq-dev \
+#   && apt-get clean  \
+#   # cleaning up unused files
+#   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+#   && rm -rf /var/lib/apt/lists/*
+
 RUN apt-get update \
-  && apt-get -y install netcat gcc postgresql \
-  && apt-get clean
+  # dependencies for building Python packages
+  && apt-get install -y build-essential \
+  # psycopg2 dependencies
+  && apt-get install -y libpq-dev \
+  # Additional dependencies
+  && apt-get install -y telnet netcat postgresql \
+  # cleaning up unused files
+  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+  && rm -rf /var/lib/apt/lists/*
 
 # install dependencies
 RUN pip install --upgrade pip
@@ -24,4 +40,7 @@ COPY . .
 
 # add entrypoint.sh
 COPY ./entrypoint.sh .
+
 RUN chmod +x /usr/src/app/entrypoint.sh
+
+ENTRYPOINT [ "/entrypoint" ]

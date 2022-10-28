@@ -9,6 +9,7 @@ cli = FlaskGroup(create_app=create_app)
 
 @cli.command("recreate_db")
 def recreate_db():
+    """Recreate the database"""
     db.drop_all()
     db.create_all()
     db.session.commit()
@@ -16,6 +17,7 @@ def recreate_db():
 
 @cli.command('seed_db')
 def seed_db():
+    """Seed the database"""
     db.session.add(User(username='michael', email="hermanmu@gmail.com", password="supersecret"))
     db.session.add(User(username='michaelherman', email="michael@mherman.org", password="supersecret"))
     db.session.commit()
